@@ -52,7 +52,19 @@ public class Activity_2 extends AppCompatActivity {
                 finish();
             }
         });
+    }
+    public void onSaveInstanceState(Bundle b){
+        //Guardamos el nombre
+        b.putCharSequence("nombre", nombre);
+        //Guardamos la edad si se ha introducido
+        b.putCharSequence("edad", cajaEdad.getText());
+    }
 
+    public void onRestoreInstanceState(Bundle b){
+        //Recuperamos el nombre
+        nombre = b.getCharSequence("nombre");
+        //Ponemos la edad en la caja
+        cajaEdad.setText(b.getCharSequence("edad"));
 
     }
 }

@@ -8,17 +8,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText cajaNombre;
     private Button botonEnviar;
+    private RadioGroup opciones;
     private RadioButton opcion1, opcion2;
     private TextView textoInfo;
     private static final int PETICION = 1;
-    private CharSequence cadenaEdad;
+    private CharSequence cadenaEdad, nombre;
     private int edad = 19;
+    private boolean segundaVez = false;                     //Variable para comprobar si se ha introducido ya la edad
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         textoInfo=(TextView)findViewById(R.id.textoInfo);
         opcion1=(RadioButton)findViewById(R.id.opcionHombre);
         opcion2=(RadioButton)findViewById(R.id.opcionMujer);
+        opciones=(RadioGroup)findViewById(R.id.grupo1);
 
         //Añadimos un listener al boton enviar
         botonEnviar.setOnClickListener(new View.OnClickListener(){
@@ -69,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
+
+        //Ponemos el semáforo en true
+        segundaVez = true;                  //ARREGLAR
+
         //Desactivamos boton y caja de texto
         botonEnviar.setEnabled(false);
         cajaNombre.setEnabled(false);
@@ -88,6 +97,48 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             textoInfo.setText("Tienes " + edad + " años, eres menor de edad");
+        }
+    }
+
+    public void onSaveInstanceState(Bundle b){
+        if(b != null) {
+            //Si el usuario ya ha introducido su edad, guardamos la información que muestra el TextView
+            if (segundaVez) {
+                b.putCharSequence("textoInfo", textoInfo.getText());
+                b.putInt("edad", edad);
+            }
+            //De todas maneras guardaremos el nombre del usuario y qué radiobutton está seleccionado
+            b.putCharSequence("nombre", cajaNombre.getText());
+
+            if (opcion1.isChecked()) {
+                b.putCharSequence("sexo", "masculino");
+            } else if (opcion2.isChecked()) {
+                b.putCharSequence("sexo", "femenino");
+            }
+        }
+    }
+
+    public void onRestoreInstanceState(Bundle b){
+        if(b != null) {
+            if (segundaVez) {
+                //Recuperamos la información del usuario
+                textoInfo.setText(b.getCharSequence("textoInfo"));
+                //Recuperamos la edad
+                edad = b.getInt("edad");
+                //Desactivamos los campos innecesarios
+                botonEnviar.setEnabled(false);
+                cajaNombre.setEnabled(false);
+                opcion1.setEnabled(false);
+                opcion2.setEnabled(false);
+            }
+            cajaNombre.setText(b.getCharSequence("nombre"));
+            if (b.getCharSequence("sexo").toString().equals("masculino")) {
+                opcion1.setChecked(true);
+                opcion2.setChecked(false);
+            } else {
+                opcion2.setChecked(true);
+                opcion1.setChecked(false);
+            }
         }
     }
 }
