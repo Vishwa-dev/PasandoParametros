@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onRestoreInstanceState(Bundle b){
         if(b != null) {
-            if (segundaVez) {
+            if(b.containsKey("edad")){
                 //Recuperamos la información del usuario
                 textoInfo.setText(b.getCharSequence("textoInfo"));
                 //Recuperamos la edad
